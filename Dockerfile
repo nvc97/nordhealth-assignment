@@ -2,7 +2,7 @@ FROM python:3.12-alpine
 
 WORKDIR /app
 
-COPY . /app
+COPY main.py requirements.txt /app/
 
 RUN pip install --upgrade pip
 
