@@ -51,10 +51,6 @@ jobs:
         echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
     - name: Deploy to EC2 via SSH
-      # Uses SSH to run remote commands on the EC2 instance to pull the new image
-      # and restart the container. Requires the target EC2 instance to have Docker
-      # and AWS CLI installed, and the GitHub secret `EC2_SSH_PRIVATE_KEY` with
-      # the private key for SSH access.
       uses: appleboy/ssh-action@v0.1.7
       with:
         host: ${{ secrets.EC2_HOST || env.EC2_HOST }}

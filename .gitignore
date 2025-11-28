@@ -1,2 +1,5 @@
 docker-compose.yml
 prometheus.yml
+.terraform*
+terraform.tfstate
+terraform.tfstate.backup
