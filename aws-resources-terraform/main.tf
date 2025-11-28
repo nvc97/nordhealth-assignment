@@ -86,9 +86,7 @@ resource "aws_vpc_security_group_ingress_rule" "Custom_Web" {
 resource "aws_vpc_security_group_egress_rule" "wildcard_egress" {
     security_group_id = aws_security_group.demo-sg-tf.id
     cidr_ipv4   = "0.0.0.0/0"
-    from_port   = 0
     ip_protocol = "-1"
-    to_port     = 0
 }
 
 resource "aws_instance" "demo-ec2-tf" {
@@ -98,6 +96,7 @@ resource "aws_instance" "demo-ec2-tf" {
     vpc_security_group_ids = [aws_security_group.demo-sg-tf.id]
     key_name               = "ec2-key-tf"
     associate_public_ip_address = true
+    iam_instance_profile = aws_iam_instance_profile.demo-ec2-instance-profile-tf.name
     tags = {
         Name = "demo-ec2-tf"
     }
@@ -117,4 +116,32 @@ resource "aws_ecr_repository" "demo-ecr-tf" {
     image_scanning_configuration {
       scan_on_push = true
     }
+}
+
+
+# Create IAM role and instance profile for EC2 to access ECR
+
+data "aws_iam_policy_document" "ec2-assume-role" {
+  statement {
+    actions = ["sts:AssumeRole"]
+    principals {
+      type        = "Service"
+      identifiers = ["ec2.amazonaws.com"]
+    }
+  }
+}
+
+resource "aws_iam_role" "demo-ec2-role-tf" {
+  name               = "demo-ec2-ecr-role-tf"
+  assume_role_policy = data.aws_iam_policy_document.ec2-assume-role.json
+}
+
+resource "aws_iam_role_policy_attachment" "demo-ecr-readonly-tf" {
+  role       = aws_iam_role.demo-ec2-role-tf.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+}
+
+resource "aws_iam_instance_profile" "demo-ec2-instance-profile-tf" {
+  name = "demo-ec2-instance-profile-tf"
+  role = aws_iam_role.demo-ec2-role-tf.name
 }

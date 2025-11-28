@@ -53,10 +53,8 @@ jobs:
     - name: Deploy to EC2 via SSH
       uses: appleboy/ssh-action@v0.1.7
       with:
-        host: ${{ secrets.EC2_HOST || env.EC2_HOST }}
-        username: ${{ secrets.EC2_USER || env.EC2_USER }}
+        host: ${{ secrets.EC2_HOST }}
         key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
-        port: ${{ secrets.SSH_PORT || env.SSH_PORT }}
         script: |
           set -euo pipefail
           ECR_REGISTRY=${{ steps.login-ecr.outputs.registry }}
