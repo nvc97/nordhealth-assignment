@@ -54,7 +54,9 @@ jobs:
       uses: appleboy/ssh-action@v0.1.7
       with:
         host: ${{ secrets.EC2_HOST }}
+        username: ${{ env.EC2_USER }}
         key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+        port: ${{ env.SSH_PORT }}
         script: |
           set -euo pipefail
           ECR_REGISTRY=${{ steps.login-ecr.outputs.registry }}
